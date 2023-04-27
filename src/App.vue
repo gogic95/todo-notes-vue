@@ -1,31 +1,63 @@
 <template>
   <main>
-    <div class="overlay">
+    <div v-if="showModal" class="overlay">
       <div class="modal">
-        <textarea name="note" id="note" cols="30" rows="10"></textarea>
-        <button>Add Note</button>
-        <button class="close">Close</button>
+        <textarea v-model="newNote" name="note" id="note" cols="30" rows="10"></textarea>
+        <button @click="addNote">Add Note</button>
+        <button @click="showModal=false" class="close">x</button>
       </div>
     </div>
     <div class="container"> 
       <header>
         <h1>Notes</h1>
-        <button>+</button>
+        <button @click="showModal=true">+</button>
       </header>
       <div class="cards-container">
-        <div class="card">
-          <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repudiandae, esse odio, error nam ipsam aspernatur quasi nostrum unde temporibus vero ab accusamus facere saepe delectus nulla nisi, quos culpa ut.</p>
-          <p class="date">29.12.1995.</p>
-        </div>
-        <div class="card">
-          <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repudiandae, esse odio, error nam ipsam aspernatur quasi nostrum unde temporibus vero ab accusamus facere saepe delectus nulla nisi, quos culpa ut.</p>
-          <p class="date">29.12.1995.</p>
+        <div 
+          v-for="note in notesArray" 
+          :key="note.id"
+          class="card" 
+          :style="{backgroundColor: note.backgroundColor}"
+        >
+          <p class="main-text">{{ note.text }}</p>
+          <p class="date">{{note.date}}</p>
         </div>
       </div>
     </div>
   </main>
 </template>
 
+<script setup>
+  import {ref} from "vue";
+
+  const showModal = ref(false);
+  const newNote = ref("");
+  const notesArray = ref([]);
+
+  function randomBrightColor() {
+    return "hsla(" + (Math.random() * 360) + ", 87%, 70%, 0.7)";
+  } 
+
+  const addNote = () => {
+
+    if(newNote.value === ""){
+      alert("empty note");
+    }
+    else
+    {
+      notesArray.value.push({
+        id: Math.floor(Math.random()*100000),
+        text: newNote.value,
+        date: new Date().toLocaleString('sr-SP'),
+        backgroundColor: randomBrightColor() 
+      })
+
+      showModal.value = false;
+      newNote.value = "";
+    }
+  }
+
+</script>
 
 <style scoped>
   main{
@@ -94,7 +126,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.33);
+    background-color: rgba(0, 0, 0, 0.45);
     z-index: 10;
     display: flex;
     align-items: center;
@@ -115,7 +147,7 @@
     padding: 10px 20px;
     font-size: 20px;
     width: 100%;
-    background-color: forestgreen;
+    background-color: darkgreen;
     border: none;
     color: white;
     cursor: pointer;
@@ -125,6 +157,10 @@
   .modal .close{
     background-color: crimson;
     margin-top: 7px;
+  }
+
+  textarea{
+    resize: vertical;
   }
 
 </style>
