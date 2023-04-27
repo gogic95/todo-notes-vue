@@ -3,8 +3,9 @@
     <div v-if="showModal" class="overlay">
       <div class="modal">
         <textarea v-model="newNote" name="note" id="note" cols="30" rows="10"></textarea>
+        <p v-if="validationError" class="validation">{{ validationError }}</p>
         <button @click="addNote">Add Note</button>
-        <button @click="showModal=false" class="close">x</button>
+        <button @click="close" class="close">x</button>
       </div>
     </div>
     <div class="container"> 
@@ -33,15 +34,21 @@
   const showModal = ref(false);
   const newNote = ref("");
   const notesArray = ref([]);
+  const validationError = ref("");
 
   function randomBrightColor() {
     return "hsla(" + (Math.random() * 360) + ", 87%, 70%, 0.7)";
   } 
 
+  const close = () => {
+    showModal.value=false;
+    validationError.value = "";    
+  }
+
   const addNote = () => {
 
-    if(newNote.value === ""){
-      alert("empty note");
+    if(newNote.value.trim()===""){
+      validationError.value = "Can't add an empty note!";
     }
     else
     {
@@ -54,6 +61,7 @@
 
       showModal.value = false;
       newNote.value = "";
+      validationError.value = "";
     }
   }
 
@@ -161,6 +169,10 @@
 
   textarea{
     resize: vertical;
+  }
+  
+  .validation{
+    color: red;
   }
 
 </style>
